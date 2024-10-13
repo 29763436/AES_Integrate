@@ -1,0 +1,1 @@
+module AES_top (input clk,input reset,input [127:0] plaintext,input [127:0] key,output [127:0] ciphertext);
