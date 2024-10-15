@@ -1,52 +1,31 @@
-module GFM(
-    input  [7:0] a, // 8-bit input 'a'
-    input  [7:0] b, // 8-bit input 'b'
-    output [7:0] c  // 8-bit output 'c'
-);
+module GFM(A,B,C);
 
-    reg [7:0] LT [3:0]; // Lookup Table for 'LT'
-    reg [7:0] FT [3:0]; // Lookup Table for 'FT'
-    reg [7:0] c_temp;
-    integer t;
+input [7:0] A,B;
+output [7:0] C;
 
-    always @(*) begin
-        // Initialize LT Table
-        LT[0] = 8'h00;
-        LT[1] = b;
-        LT[2] = ((b << 1) & 8'hff) ^ 8'h1b;
-        LT[3] = LT[1] ^ LT[2];
+wire [7:0] w0,w1,w2,w3,w4,w5,w6,w7,w8,w9,w10,w11,w12,w13;
 
-        // Initialize FT Table
-        FT[0] = 8'h00;
-        FT[1] = 8'h1b;
-        FT[2] = (8'h1b << 1);
-        FT[3] = FT[1] ^ FT[2];
+assign w0={8{A[7]}}&B;
+assign w1={w0[6],w0[5],w0[4],w0[3],w0[2],w0[1],w0[0],1'b0}^{{8{w0[7]}}&{1'b0,1'b0,1'b0,1'b1,1'b1,1'b0,1'b1,1'b1}};
 
-        // c = (A7x + A6) * x^2
-        t = (a >> 6) & 8'h03;
-        c_temp = LT[t];
-        c_temp = ((c_temp << 2) & 8'hff) ^ FT[c_temp >> 6];
+assign w2=w1^{8{A[6]}}&B;
+assign w3={w2[6],w2[5],w2[4],w2[3],w2[2],w2[1],w2[0],1'b0}^{{8{w2[7]}}&{1'b0,1'b0,1'b0,1'b1,1'b1,1'b0,1'b1,1'b1}};
 
-        // c = (c + A5x + A4) * x^2
-        t = (a >> 4) & 8'h03;
-        c_temp = c_temp ^ LT[t];
-        c_temp = ((c_temp << 2) & 8'hff) ^ FT[c_temp >> 6];
+assign w4=w3^{8{A[5]}}&B;
+assign w5={w4[6],w4[5],w4[4],w4[3],w4[2],w4[1],w4[0],1'b0}^{{8{w4[7]}}&{1'b0,1'b0,1'b0,1'b1,1'b1,1'b0,1'b1,1'b1}};
 
-        // c = (c + A3x + A2) * x
-        t = (a >> 2) & 8'h03;
-        c_temp = c_temp ^ LT[t];
-        c_temp = ((c_temp << 1) & 8'hff) ^ FT[c_temp >> 7];
+assign w6=w5^{8{A[4]}}&B;
+assign w7={w6[6],w6[5],w6[4],w6[3],w6[2],w6[1],w6[0],1'b0}^{{8{w6[7]}}&{1'b0,1'b0,1'b0,1'b1,1'b1,1'b0,1'b1,1'b1}};
 
-        // c = (c + A1x) * x
-        t = (a >> 1) & 8'h01;
-        c_temp = c_temp ^ LT[t];
-        c_temp = ((c_temp << 1) & 8'hff) ^ FT[c_temp >> 7];
+assign w8=w7^{8{A[3]}}&B;
+assign w9={w8[6],w8[5],w8[4],w8[3],w8[2],w8[1],w8[0],1'b0}^{{8{w8[7]}}&{1'b0,1'b0,1'b0,1'b1,1'b1,1'b0,1'b1,1'b1}};
 
-        // c = c + A0B
-        c_temp = c_temp ^ LT[a & 8'h01];
-    end
+assign w10=w9^{8{A[2]}}&B;
+assign w11={w10[6],w10[5],w10[4],w10[3],w10[2],w10[1],w10[0],1'b0}^{{8{w10[7]}}&{1'b0,1'b0,1'b0,1'b1,1'b1,1'b0,1'b1,1'b1}};
 
-    // Assign result to output
-    assign c = c_temp;
+assign w12=w11^{8{A[1]}}&B;
+assign w13={w12[6],w12[5],w12[4],w12[3],w12[2],w12[1],w12[0],1'b0}^{{8{w12[7]}}&{1'b0,1'b0,1'b0,1'b1,1'b1,1'b0,1'b1,1'b1}};
+
+assign C=w13^{8{A[0]}}&B;
 
 endmodule
