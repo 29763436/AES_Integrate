@@ -49,5 +49,4 @@ set_global_assignment -name VERILOG_FILE Keyexpansion.v
 set_global_assignment -name VERILOG_FILE SBox.v
 set_global_assignment -name VERILOG_FILE MixColumns.v
 set_global_assignment -name VERILOG_FILE GFM.v
-set_global_assignment -name VERILOG_FILE a2_function.v
 set_global_assignment -name VERILOG_FILE AES_top.v
