@@ -1,8 +1,7 @@
-module Keyexpansion (CLK, reset, sel, key, rk);
-
+module Keyexpansion (rd,CLK, sel, key, rk);
+	 input rd;
     input sel;
     input CLK;
-    input reset;           // 新增 reset 端口
     input [127:0] key;     // 2b7e151628aed2a6abf7158809cf4f3c
     output reg [127:0] rk;
 
@@ -90,15 +89,12 @@ module Keyexpansion (CLK, reset, sel, key, rk);
         end
     endfunction
 
-    always @(posedge CLK or posedge reset) begin
-        if (reset) begin
-            rk = 128'b0; // 重置 rk 為 0
-            i = 0;       // 重置輪次計數器
-        end else if (sel) begin
+    always @(posedge CLK) begin
+        if (sel) begin
             rk = key;
             i = 0;
         end else begin
-            if (i < 10) begin
+            if (i < 10 && rd) begin
                 rk[127:96] = rk[127:96] ^ (SubWord(RotWord(rk[31:0])) ^ Rcon[i]);
                 rk[95:64] = rk[95:64] ^ rk[127:96];
                 rk[63:32] = rk[63:32] ^ rk[95:64];

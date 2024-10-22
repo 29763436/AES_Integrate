@@ -1,0 +1,390 @@
+Analysis & Synthesis report for AES_top
+Wed Oct 23 01:32:09 2024
+Quartus II 64-Bit Version 13.1.0 Build 162 10/23/2013 SJ Web Edition
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Legal Notice
+  2. Analysis & Synthesis Summary
+  3. Analysis & Synthesis Settings
+  4. Parallel Compilation
+  5. Analysis & Synthesis Source Files Read
+  6. Analysis & Synthesis Resource Usage Summary
+  7. Analysis & Synthesis Resource Utilization by Entity
+  8. State Machine - |AES_top|t
+  9. State Machine - |AES_top|state_reg
+ 10. Registers Removed During Synthesis
+ 11. General Register Statistics
+ 12. Inverted Register Statistics
+ 13. Multiplexer Restructuring Statistics (Restructuring Performed)
+ 14. Parameter Settings for User Entity Instance: Keyexpansion:key_expansion
+ 15. Parameter Settings for User Entity Instance: SBox:Sbox_inst
+ 16. Elapsed Time Per Partition
+ 17. Analysis & Synthesis Messages
+ 18. Analysis & Synthesis Suppressed Messages
+
+
+
+----------------
+; Legal Notice ;
+----------------
+Copyright (C) 1991-2013 Altera Corporation
+Your use of Altera Corporation's design tools, logic functions 
+and other software and tools, and its AMPP partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Altera Program License 
+Subscription Agreement, Altera MegaCore Function License 
+Agreement, or other applicable license agreement, including, 
+without limitation, that your use is for the sole purpose of 
+programming logic devices manufactured by Altera and sold by 
+Altera or its authorized distributors.  Please refer to the 
+applicable agreement for further details.
+
+
+
++---------------------------------------------------------------------------------+
+; Analysis & Synthesis Summary                                                    ;
++------------------------------------+--------------------------------------------+
+; Analysis & Synthesis Status        ; Successful - Wed Oct 23 01:32:08 2024      ;
+; Quartus II 64-Bit Version          ; 13.1.0 Build 162 10/23/2013 SJ Web Edition ;
+; Revision Name                      ; AES_top                                    ;
+; Top-level Entity Name              ; AES_top                                    ;
+; Family                             ; Cyclone IV GX                              ;
+; Total logic elements               ; 8,849                                      ;
+;     Total combinational functions  ; 8,721                                      ;
+;     Dedicated logic registers      ; 659                                        ;
+; Total registers                    ; 659                                        ;
+; Total pins                         ; 388                                        ;
+; Total virtual pins                 ; 0                                          ;
+; Total memory bits                  ; 0                                          ;
+; Embedded Multiplier 9-bit elements ; 0                                          ;
+; Total GXB Receiver Channel PCS     ; 0                                          ;
+; Total GXB Receiver Channel PMA     ; 0                                          ;
+; Total GXB Transmitter Channel PCS  ; 0                                          ;
+; Total GXB Transmitter Channel PMA  ; 0                                          ;
+; Total PLLs                         ; 0                                          ;
++------------------------------------+--------------------------------------------+
+
+
++----------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Settings                                                                                        ;
++----------------------------------------------------------------------------+--------------------+--------------------+
+; Option                                                                     ; Setting            ; Default Value      ;
++----------------------------------------------------------------------------+--------------------+--------------------+
+; Top-level entity name                                                      ; AES_top            ; AES_top            ;
+; Family name                                                                ; Cyclone IV GX      ; Cyclone IV GX      ;
+; Use smart compilation                                                      ; Off                ; Off                ;
+; Enable parallel Assembler and TimeQuest Timing Analyzer during compilation ; On                 ; On                 ;
+; Enable compact report table                                                ; Off                ; Off                ;
+; Restructure Multiplexers                                                   ; Auto               ; Auto               ;
+; Create Debugging Nodes for IP Cores                                        ; Off                ; Off                ;
+; Preserve fewer node names                                                  ; On                 ; On                 ;
+; Disable OpenCore Plus hardware evaluation                                  ; Off                ; Off                ;
+; Verilog Version                                                            ; Verilog_2001       ; Verilog_2001       ;
+; VHDL Version                                                               ; VHDL_1993          ; VHDL_1993          ;
+; State Machine Processing                                                   ; Auto               ; Auto               ;
+; Safe State Machine                                                         ; Off                ; Off                ;
+; Extract Verilog State Machines                                             ; On                 ; On                 ;
+; Extract VHDL State Machines                                                ; On                 ; On                 ;
+; Ignore Verilog initial constructs                                          ; Off                ; Off                ;
+; Iteration limit for constant Verilog loops                                 ; 5000               ; 5000               ;
+; Iteration limit for non-constant Verilog loops                             ; 250                ; 250                ;
+; Add Pass-Through Logic to Inferred RAMs                                    ; On                 ; On                 ;
+; Infer RAMs from Raw Logic                                                  ; On                 ; On                 ;
+; Parallel Synthesis                                                         ; On                 ; On                 ;
+; DSP Block Balancing                                                        ; Auto               ; Auto               ;
+; NOT Gate Push-Back                                                         ; On                 ; On                 ;
+; Power-Up Don't Care                                                        ; On                 ; On                 ;
+; Remove Redundant Logic Cells                                               ; Off                ; Off                ;
+; Remove Duplicate Registers                                                 ; On                 ; On                 ;
+; Ignore CARRY Buffers                                                       ; Off                ; Off                ;
+; Ignore CASCADE Buffers                                                     ; Off                ; Off                ;
+; Ignore GLOBAL Buffers                                                      ; Off                ; Off                ;
+; Ignore ROW GLOBAL Buffers                                                  ; Off                ; Off                ;
+; Ignore LCELL Buffers                                                       ; Off                ; Off                ;
+; Ignore SOFT Buffers                                                        ; On                 ; On                 ;
+; Limit AHDL Integers to 32 Bits                                             ; Off                ; Off                ;
+; Optimization Technique                                                     ; Balanced           ; Balanced           ;
+; Carry Chain Length                                                         ; 70                 ; 70                 ;
+; Auto Carry Chains                                                          ; On                 ; On                 ;
+; Auto Open-Drain Pins                                                       ; On                 ; On                 ;
+; Perform WYSIWYG Primitive Resynthesis                                      ; Off                ; Off                ;
+; Auto ROM Replacement                                                       ; On                 ; On                 ;
+; Auto RAM Replacement                                                       ; On                 ; On                 ;
+; Auto DSP Block Replacement                                                 ; On                 ; On                 ;
+; Auto Shift Register Replacement                                            ; Auto               ; Auto               ;
+; Allow Shift Register Merging across Hierarchies                            ; Auto               ; Auto               ;
+; Auto Clock Enable Replacement                                              ; On                 ; On                 ;
+; Strict RAM Replacement                                                     ; Off                ; Off                ;
+; Allow Synchronous Control Signals                                          ; On                 ; On                 ;
+; Force Use of Synchronous Clear Signals                                     ; Off                ; Off                ;
+; Auto RAM Block Balancing                                                   ; On                 ; On                 ;
+; Auto RAM to Logic Cell Conversion                                          ; Off                ; Off                ;
+; Auto Resource Sharing                                                      ; Off                ; Off                ;
+; Allow Any RAM Size For Recognition                                         ; Off                ; Off                ;
+; Allow Any ROM Size For Recognition                                         ; Off                ; Off                ;
+; Allow Any Shift Register Size For Recognition                              ; Off                ; Off                ;
+; Use LogicLock Constraints during Resource Balancing                        ; On                 ; On                 ;
+; Ignore translate_off and synthesis_off directives                          ; Off                ; Off                ;
+; Timing-Driven Synthesis                                                    ; On                 ; On                 ;
+; Report Parameter Settings                                                  ; On                 ; On                 ;
+; Report Source Assignments                                                  ; On                 ; On                 ;
+; Report Connectivity Checks                                                 ; On                 ; On                 ;
+; Ignore Maximum Fan-Out Assignments                                         ; Off                ; Off                ;
+; Synchronization Register Chain Length                                      ; 2                  ; 2                  ;
+; PowerPlay Power Optimization                                               ; Normal compilation ; Normal compilation ;
+; HDL message level                                                          ; Level2             ; Level2             ;
+; Suppress Register Optimization Related Messages                            ; Off                ; Off                ;
+; Number of Removed Registers Reported in Synthesis Report                   ; 5000               ; 5000               ;
+; Number of Swept Nodes Reported in Synthesis Report                         ; 5000               ; 5000               ;
+; Number of Inverted Registers Reported in Synthesis Report                  ; 100                ; 100                ;
+; Clock MUX Protection                                                       ; On                 ; On                 ;
+; Auto Gated Clock Conversion                                                ; Off                ; Off                ;
+; Block Design Naming                                                        ; Auto               ; Auto               ;
+; SDC constraint protection                                                  ; Off                ; Off                ;
+; Synthesis Effort                                                           ; Auto               ; Auto               ;
+; Shift Register Replacement - Allow Asynchronous Clear Signal               ; On                 ; On                 ;
+; Pre-Mapping Resynthesis Optimization                                       ; Off                ; Off                ;
+; Analysis & Synthesis Message Level                                         ; Medium             ; Medium             ;
+; Disable Register Merging Across Hierarchies                                ; Auto               ; Auto               ;
+; Resource Aware Inference For Block RAM                                     ; On                 ; On                 ;
+; Synthesis Seed                                                             ; 1                  ; 1                  ;
++----------------------------------------------------------------------------+--------------------+--------------------+
+
+
+Parallel compilation was disabled, but you have multiple processors available. Enable parallel compilation to reduce compilation time.
++-------------------------------------+
+; Parallel Compilation                ;
++----------------------------+--------+
+; Processors                 ; Number ;
++----------------------------+--------+
+; Number detected on machine ; 12     ;
+; Maximum allowed            ; 1      ;
++----------------------------+--------+
+
+
++---------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Source Files Read                                                                                    ;
++----------------------------------+-----------------+------------------------+-----------------------------------+---------+
+; File Name with User-Entered Path ; Used in Netlist ; File Type              ; File Name with Absolute Path      ; Library ;
++----------------------------------+-----------------+------------------------+-----------------------------------+---------+
+; Keyexpansion.v                   ; yes             ; User Verilog HDL File  ; C:/altera/13.1/AES/Keyexpansion.v ;         ;
+; SBox.v                           ; yes             ; User Verilog HDL File  ; C:/altera/13.1/AES/SBox.v         ;         ;
+; MixColumns.v                     ; yes             ; User Verilog HDL File  ; C:/altera/13.1/AES/MixColumns.v   ;         ;
+; GFM.v                            ; yes             ; User Verilog HDL File  ; C:/altera/13.1/AES/GFM.v          ;         ;
+; AES_top.v                        ; yes             ; User Verilog HDL File  ; C:/altera/13.1/AES/AES_top.v      ;         ;
++----------------------------------+-----------------+------------------------+-----------------------------------+---------+
+
+
++---------------------------------------------+
+; Analysis & Synthesis Resource Usage Summary ;
++--------------------------+------------------+
+; Resource                 ; Usage            ;
++--------------------------+------------------+
+; I/O pins                 ; 388              ;
+; DSP block 9-bit elements ; 0                ;
+; Maximum fan-out node     ; CLK~input        ;
+; Maximum fan-out          ; 659              ;
+; Total fan-out            ; 34630            ;
+; Average fan-out          ; 3.41             ;
++--------------------------+------------------+
+
+
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                          ;
++---------------------------------+-------------------+--------------+-------------+--------------+---------+-----------+-----------+------+--------------+-------------------------------------+--------------+
+; Compilation Hierarchy Node      ; LC Combinationals ; LC Registers ; Memory Bits ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; DSP 36x36 ; Pins ; Virtual Pins ; Full Hierarchy Name                 ; Library Name ;
++---------------------------------+-------------------+--------------+-------------+--------------+---------+-----------+-----------+------+--------------+-------------------------------------+--------------+
+; |AES_top                        ; 8721 (781)        ; 659 (527)    ; 0           ; 0            ; 0       ; 0         ; 0         ; 388  ; 0            ; |AES_top                            ; work         ;
+;    |Keyexpansion:key_expansion| ; 1689 (1689)       ; 132 (132)    ; 0           ; 0            ; 0       ; 0         ; 0         ; 0    ; 0            ; |AES_top|Keyexpansion:key_expansion ; work         ;
+;    |MixColumns:Mix_inst|        ; 197 (197)         ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0         ; 0    ; 0            ; |AES_top|MixColumns:Mix_inst        ; work         ;
+;    |SBox:Sbox_inst|             ; 6054 (6054)       ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0         ; 0    ; 0            ; |AES_top|SBox:Sbox_inst             ; work         ;
++---------------------------------+-------------------+--------------+-------------+--------------+---------+-----------+-----------+------+--------------+-------------------------------------+--------------+
+Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
+
+
+Encoding Type:  One-Hot
++----------------------------------+
+; State Machine - |AES_top|t       ;
++------+------+------+------+------+
+; Name ; t.t4 ; t.t3 ; t.t2 ; t.t1 ;
++------+------+------+------+------+
+; t.t1 ; 0    ; 0    ; 0    ; 0    ;
+; t.t2 ; 0    ; 0    ; 1    ; 1    ;
+; t.t3 ; 0    ; 1    ; 0    ; 1    ;
+; t.t4 ; 1    ; 0    ; 0    ; 1    ;
++------+------+------+------+------+
+
+
+Encoding Type:  One-Hot
++---------------------------------------------------------------------------------------+
+; State Machine - |AES_top|state_reg                                                    ;
++-----------------+-----------------+-----------------+----------------+----------------+
+; Name            ; state_reg.FINAL ; state_reg.ROUND ; state_reg.INIT ; state_reg.IDLE ;
++-----------------+-----------------+-----------------+----------------+----------------+
+; state_reg.IDLE  ; 0               ; 0               ; 0              ; 0              ;
+; state_reg.INIT  ; 0               ; 0               ; 1              ; 1              ;
+; state_reg.ROUND ; 0               ; 1               ; 0              ; 1              ;
+; state_reg.FINAL ; 1               ; 0               ; 0              ; 1              ;
++-----------------+-----------------+-----------------+----------------+----------------+
+
+
++------------------------------------------------------------+
+; Registers Removed During Synthesis                         ;
++---------------------------------------+--------------------+
+; Register name                         ; Reason for Removal ;
++---------------------------------------+--------------------+
+; t~4                                   ; Lost fanout        ;
+; t~5                                   ; Lost fanout        ;
+; state_reg~8                           ; Lost fanout        ;
+; state_reg~9                           ; Lost fanout        ;
+; Total Number of Removed Registers = 4 ;                    ;
++---------------------------------------+--------------------+
+
+
++------------------------------------------------------+
+; General Register Statistics                          ;
++----------------------------------------------+-------+
+; Statistic                                    ; Value ;
++----------------------------------------------+-------+
+; Total registers                              ; 659   ;
+; Number of registers using Synchronous Clear  ; 3     ;
+; Number of registers using Synchronous Load   ; 214   ;
+; Number of registers using Asynchronous Clear ; 143   ;
+; Number of registers using Asynchronous Load  ; 0     ;
+; Number of registers using Clock Enable       ; 648   ;
+; Number of registers using Preset             ; 0     ;
++----------------------------------------------+-------+
+
+
++--------------------------------------------------+
+; Inverted Register Statistics                     ;
++----------------------------------------+---------+
+; Inverted Register                      ; Fan out ;
++----------------------------------------+---------+
+; sel                                    ; 134     ;
+; Total number of inverted registers = 1 ;         ;
++----------------------------------------+---------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                            ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+---------------------------------------------+
+; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output                  ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+---------------------------------------------+
+; 3:1                ; 4 bits    ; 8 LEs         ; 4 LEs                ; 4 LEs                  ; Yes        ; |AES_top|Keyexpansion:key_expansion|i[0]    ;
+; 3:1                ; 128 bits  ; 256 LEs       ; 128 LEs              ; 128 LEs                ; Yes        ; |AES_top|Keyexpansion:key_expansion|rk[102] ;
+; 4:1                ; 128 bits  ; 256 LEs       ; 0 LEs                ; 256 LEs                ; Yes        ; |AES_top|in_state[29]                       ;
+; 5:1                ; 4 bits    ; 12 LEs        ; 4 LEs                ; 8 LEs                  ; Yes        ; |AES_top|round[1]                           ;
+; 8:1                ; 32 bits   ; 160 LEs       ; 96 LEs               ; 64 LEs                 ; Yes        ; |AES_top|state[95]                          ;
+; 8:1                ; 96 bits   ; 480 LEs       ; 384 LEs              ; 96 LEs                 ; Yes        ; |AES_top|state[73]                          ;
+; 3:1                ; 2 bits    ; 4 LEs         ; 2 LEs                ; 2 LEs                  ; No         ; |AES_top|state_reg                          ;
+; 7:1                ; 2 bits    ; 8 LEs         ; 4 LEs                ; 4 LEs                  ; No         ; |AES_top|Selector266                        ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+---------------------------------------------+
+
+
++-------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: Keyexpansion:key_expansion ;
++----------------+-------+------------------------------------------------+
+; Parameter Name ; Value ; Type                                           ;
++----------------+-------+------------------------------------------------+
+; m              ; 8     ; Signed Integer                                 ;
+; mask           ; 255   ; Signed Integer                                 ;
+; p              ; 27    ; Signed Integer                                 ;
++----------------+-------+------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: SBox:Sbox_inst ;
++----------------+-------+------------------------------------+
+; Parameter Name ; Value ; Type                               ;
++----------------+-------+------------------------------------+
+; m              ; 8     ; Signed Integer                     ;
+; mask           ; 255   ; Signed Integer                     ;
+; p              ; 27    ; Signed Integer                     ;
++----------------+-------+------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-------------------------------+
+; Elapsed Time Per Partition    ;
++----------------+--------------+
+; Partition Name ; Elapsed Time ;
++----------------+--------------+
+; Top            ; 00:01:27     ;
++----------------+--------------+
+
+
++-------------------------------+
+; Analysis & Synthesis Messages ;
++-------------------------------+
+Info: *******************************************************************
+Info: Running Quartus II 64-Bit Analysis & Synthesis
+    Info: Version 13.1.0 Build 162 10/23/2013 SJ Web Edition
+    Info: Processing started: Wed Oct 23 01:30:38 2024
+Info: Command: quartus_map --read_settings_files=on --write_settings_files=off AES_top -c AES_top
+Warning (20028): Parallel compilation is not licensed and has been disabled
+Warning (10463): Verilog HDL Declaration warning at Keyexpansion.v(76): "byte" is SystemVerilog-2005 keyword
+Warning (10463): Verilog HDL Declaration warning at Keyexpansion.v(78): "bit" is SystemVerilog-2005 keyword
+Info (12021): Found 1 design units, including 1 entities, in source file keyexpansion.v
+    Info (12023): Found entity 1: Keyexpansion
+Warning (10463): Verilog HDL Declaration warning at SBox.v(39): "byte" is SystemVerilog-2005 keyword
+Warning (10463): Verilog HDL Declaration warning at SBox.v(41): "bit" is SystemVerilog-2005 keyword
+Info (12021): Found 1 design units, including 1 entities, in source file sbox.v
+    Info (12023): Found entity 1: SBox
+Info (12021): Found 1 design units, including 1 entities, in source file mixcolumns.v
+    Info (12023): Found entity 1: MixColumns
+Info (12021): Found 1 design units, including 1 entities, in source file gfm.v
+    Info (12023): Found entity 1: GFM
+Info (12021): Found 1 design units, including 1 entities, in source file aes_top.v
+    Info (12023): Found entity 1: AES_top
+Info (12127): Elaborating entity "AES_top" for the top level hierarchy
+Warning (10230): Verilog HDL assignment warning at AES_top.v(126): truncated value with size 32 to match size of target (4)
+Info (12128): Elaborating entity "Keyexpansion" for hierarchy "Keyexpansion:key_expansion"
+Warning (10230): Verilog HDL assignment warning at Keyexpansion.v(36): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at Keyexpansion.v(84): truncated value with size 32 to match size of target (1)
+Warning (10230): Verilog HDL assignment warning at Keyexpansion.v(87): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at Keyexpansion.v(102): truncated value with size 32 to match size of target (4)
+Warning (10030): Net "Rcon.data_a" at Keyexpansion.v(8) has no driver or initial value, using a default initial value '0'
+Warning (10030): Net "Rcon.waddr_a" at Keyexpansion.v(8) has no driver or initial value, using a default initial value '0'
+Warning (10030): Net "Rcon.we_a" at Keyexpansion.v(8) has no driver or initial value, using a default initial value '0'
+Info (12128): Elaborating entity "SBox" for hierarchy "SBox:Sbox_inst"
+Warning (10230): Verilog HDL assignment warning at SBox.v(18): truncated value with size 32 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at SBox.v(48): truncated value with size 32 to match size of target (1)
+Warning (10230): Verilog HDL assignment warning at SBox.v(51): truncated value with size 32 to match size of target (8)
+Info (12128): Elaborating entity "MixColumns" for hierarchy "MixColumns:Mix_inst"
+Info (10008): Verilog HDL or VHDL information: EDA Netlist Writer cannot regroup multidimensional array "A" into its bus
+Info (10008): Verilog HDL or VHDL information: EDA Netlist Writer cannot regroup multidimensional array "GFM" into its bus
+Info (12128): Elaborating entity "GFM" for hierarchy "MixColumns:Mix_inst|GFM:row_loop[0].col_loop[0].gfm_loop[0].gfm_inst"
+Info (276014): Found 1 instances of uninferred RAM logic
+    Info (276004): RAM logic "Keyexpansion:key_expansion|Rcon" is uninferred due to inappropriate RAM size
+Critical Warning (127005): Memory depth (16) in the design file differs from memory depth (10) in the Memory Initialization File "C:/altera/13.1/AES/db/AES_top.ram0_Keyexpansion_f6c79a68.hdl.mif" -- setting initial value for remaining addresses to 0
+Info (13000): Registers with preset signals will power-up high
+Info (13003): DEV_CLRn pin will set, and not reset, register with preset signal due to NOT Gate Push-Back
+Info (286030): Timing-Driven Synthesis is running
+Info (17049): 4 registers lost all their fanouts during netlist optimizations.
+Info (144001): Generated suppressed messages file C:/altera/13.1/AES/output_files/AES_top.map.smsg
+Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
+    Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
+Info (21057): Implemented 9423 device resources after synthesis - the final resource count might be different
+    Info (21058): Implemented 259 input pins
+    Info (21059): Implemented 129 output pins
+    Info (21061): Implemented 9035 logic cells
+Info: Quartus II 64-Bit Analysis & Synthesis was successful. 0 errors, 17 warnings
+    Info: Peak virtual memory: 4777 megabytes
+    Info: Processing ended: Wed Oct 23 01:32:09 2024
+    Info: Elapsed time: 00:01:31
+    Info: Total CPU time (on all processors): 00:00:56
+
+
++------------------------------------------+
+; Analysis & Synthesis Suppressed Messages ;
++------------------------------------------+
+The suppressed messages can be found in C:/altera/13.1/AES/output_files/AES_top.map.smsg.
+
+

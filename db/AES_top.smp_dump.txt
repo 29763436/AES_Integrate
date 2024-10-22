@@ -1,0 +1,14 @@
+
+State Machine - |AES_top|t
+Name t.t4 t.t3 t.t2 t.t1 
+t.t1 0 0 0 0 
+t.t2 0 0 1 1 
+t.t3 0 1 0 1 
+t.t4 1 0 0 1 
+
+State Machine - |AES_top|state_reg
+Name state_reg.FINAL state_reg.ROUND state_reg.INIT state_reg.IDLE 
+state_reg.IDLE 0 0 0 0 
+state_reg.INIT 0 0 1 1 
+state_reg.ROUND 0 1 0 1 
+state_reg.FINAL 1 0 0 1 

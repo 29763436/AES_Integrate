@@ -1,0 +1,2 @@
+Warning (10268): Verilog HDL information at AES_top.v(73): always construct contains both blocking and non-blocking assignments
+Info (10281): Verilog HDL Declaration information at AES_top.v(16): object "round" differs only in case from object "ROUND" in the same scope
