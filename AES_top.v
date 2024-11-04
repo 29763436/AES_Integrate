@@ -5,9 +5,6 @@ module AES_top (
     input wire [127:0] in,          // 128-bit input block
     input wire [127:0] key,         // 128-bit key (AES-128)
     output reg [127:0] out,
-	 //output reg [127:0] rok
-	 //output reg [127:0] sb,
-	 //output reg [127:0] mix,
     output reg ready	 
 );
 
@@ -21,7 +18,7 @@ module AES_top (
 	 reg [127:0] min_state;
 	 wire [127:0] sbox_state;
 	 reg rd;
-    // 使用新的 AESK 模組
+
     Keyexpansion key_expansion (
         .rd(rd),
 		  .CLK(CLK),
@@ -29,10 +26,23 @@ module AES_top (
         .key(key),
         .rk(roundKey)
     );
-	 SBox Sbox_inst (
-		  .state_in(in_state),
-		  .state_out(sbox_state)
-	 );
+	 SBox Sbox15 (.B(in_state[127:120]),.D(sbox_state[127:120]));
+	 SBox Sbox14 (.B(in_state[119:112]),.D(sbox_state[119:112]));
+	 SBox Sbox13 (.B(in_state[111:104]),.D(sbox_state[111:104]));
+	 SBox Sbox12 (.B(in_state[103:96]),.D(sbox_state[103:96]));
+	 SBox Sbox11 (.B(in_state[95:88]),.D(sbox_state[95:88]));
+	 SBox Sbox10 (.B(in_state[87:80]),.D(sbox_state[87:80]));
+	 SBox Sbox9 (.B(in_state[79:72]),.D(sbox_state[79:72]));
+	 SBox Sbox8 (.B(in_state[71:64]),.D(sbox_state[71:64]));
+	 SBox Sbox7 (.B(in_state[63:56]),.D(sbox_state[63:56]));
+	 SBox Sbox6 (.B(in_state[55:48]),.D(sbox_state[55:48]));
+	 SBox Sbox5 (.B(in_state[47:40]),.D(sbox_state[47:40]));
+	 SBox Sbox4 (.B(in_state[39:32]),.D(sbox_state[39:32]));
+	 SBox Sbox3 (.B(in_state[31:24]),.D(sbox_state[31:24]));
+	 SBox Sbox2 (.B(in_state[23:16]),.D(sbox_state[23:16]));
+	 SBox Sbox1 (.B(in_state[15:8]),.D(sbox_state[15:8]));
+	 SBox Sbox0 (.B(in_state[7:0]),.D(sbox_state[7:0]));
+	 
 	 MixColumns Mix_inst (
 		  .B(min_state), 
 		  .D(mixed_state)
@@ -41,31 +51,28 @@ module AES_top (
     input [127:0] state;
     reg [127:0] shifted_state;
     begin
-        shifted_state[127:120] = state[127:120]; // No shift for byte 0
-        shifted_state[119:112] = state[87:80];   // Shift byte 4 to position of byte 1
-        shifted_state[111:104] = state[47:40];   // Shift byte 8 to position of byte 2
-        shifted_state[103:96]  = state[7:0];     // Shift byte 12 to position of byte 3
+        shifted_state[127:120] = state[127:120]; 
+        shifted_state[119:112] = state[87:80];   
+        shifted_state[111:104] = state[47:40];   
+        shifted_state[103:96]  = state[7:0];     
 
-        shifted_state[95:88]   = state[95:88];   // No shift for byte 5
-        shifted_state[87:80]   = state[55:48];   // Shift byte 9 to position of byte 6
-        shifted_state[79:72]   = state[15:8];    // Shift byte 13 to position of byte 7
-        shifted_state[71:64]   = state[103:96];  // Shift byte 1 to position of byte 4
+        shifted_state[95:88]   = state[95:88];   
+        shifted_state[87:80]   = state[55:48];   
+        shifted_state[79:72]   = state[15:8];    
+        shifted_state[71:64]   = state[103:96];  
 
-        shifted_state[63:56]   = state[63:56];   // No shift for byte 10
-        shifted_state[55:48]   = state[23:16];   // Shift byte 14 to position of byte 11
-        shifted_state[47:40]   = state[111:104]; // Shift byte 2 to position of byte 8
-        shifted_state[39:32]   = state[71:64];   // Shift byte 6 to position of byte 9
+        shifted_state[63:56]   = state[63:56]; 
+        shifted_state[55:48]   = state[23:16];  
+        shifted_state[47:40]   = state[111:104]; 
+        shifted_state[39:32]   = state[71:64];   
 
-        shifted_state[31:24]   = state[31:24];   // No shift for byte 15
-        shifted_state[23:16]   = state[119:112]; // Shift byte 3 to position of byte 12
-        shifted_state[15:8]    = state[79:72];   // Shift byte 7 to position of byte 13
-        shifted_state[7:0]     = state[39:32];   // Shift byte 11 to position of byte 14
-
-        // Return the shifted state
+        shifted_state[31:24]   = state[31:24];   
+        shifted_state[23:16]   = state[119:112]; 
+        shifted_state[15:8]    = state[79:72];
+        shifted_state[7:0]     = state[39:32];   
         ShiftRows = shifted_state;
     end
 	 endfunction
-    // FSM 狀態控制
     reg [1:0] state_reg;
 	 reg [1:0] t;
     localparam IDLE = 2'b00, INIT = 2'b01, ROUND = 2'b10, FINAL = 2'b11;
@@ -93,7 +100,6 @@ module AES_top (
                 end
                 
                 INIT: begin
-                    //sb = roundKey;
 						  state = state ^ roundKey;
 						  in_state=state;
 						  sel <= 0;
@@ -119,8 +125,7 @@ module AES_top (
 									t<=t4;
 									rd<=1;
 									end
-								 t4:begin
-						         //sb = roundKey;    
+								 t4:begin  
 								   state = state ^ roundKey;
 									in_state=state;
 								   round = round + 1;
@@ -137,8 +142,7 @@ module AES_top (
                 FINAL: begin
 						  state=sbox_state;
                     state = ShiftRows(state);
-						  //sb = roundKey;
-                    state = state ^ roundKey; // Final AddRoundKey
+                    state = state ^ roundKey;
                     out = state; // 輸出加密結果
                     state_reg <= IDLE; // 回到閒置狀態
 						  ready = 1;

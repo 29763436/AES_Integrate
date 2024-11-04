@@ -1,74 +1,117 @@
 module SBox (
-    input [127:0] state_in, // 128-bit 輸入資料
-    output [127:0] state_out // 128-bit 輸出資料 (經過 SubBytes 替換)
+    input [7:0] B,  // 8-byte input B
+    output [7:0] D // 8-byte output D
 );
-    
-    // 使用 s_box 函數替換每個 byte
-    parameter m = 8; 
-    parameter mask = (1 << m) - 1;
-    parameter p = 27;
-	 function [7:0] GFM;
-        input [7:0] a;
-        input [7:0] b;
-        integer i;
-        begin
-            GFM = 0;
-            for (i = m-1; i > 0; i = i - 1) begin
-                GFM = GFM ^ (((a >> i) & 8'h01) * b);
-                GFM = ((GFM << 1) & mask) ^ (((GFM >> (m-1)) & 8'h01) * p);
-            end
-            GFM = GFM ^ ((a & 8'h01) * b);
-        end
-    endfunction
 
-    function [7:0] inv1;
-        input [7:0] a;
-        reg [7:0] a2;
-        integer i;
-        begin
-            inv1 = 8'h01;
-            a2 = GFM(a, a);
-            inv1 = GFM(inv1, a2);
-            for (i = 0; i < 6; i = i + 1) begin
-                a2 = GFM(a2, a2);
-                inv1 = GFM(inv1, a2);
-            end
-        end
-    endfunction
-	 function [7:0] s_box;
-        input [7:0] byte;
-        reg [7:0] d;
-        reg bit;
-        integer i;
-        begin
-            d = 8'h63;
-            s_box = 8'h00;
-            byte = inv1(byte); // 使用反元素運算
-            for (i = 0; i < 8; i = i + 1) begin
-                bit = ((byte >> i) & 1) ^ ((byte >> ((i + 4) % 8)) & 1) ^ 
-                      ((byte >> ((i + 5) % 8)) & 1) ^ ((byte >> ((i + 6) % 8)) & 1) ^ 
-                      ((byte >> ((i + 7) % 8)) & 1);
-                s_box = s_box | (bit ^ ((d >> i) & 1)) << i;
-            end
-        end
-    endfunction
+    // Intermediate wires for T, F, G calculations
+    wire [7:0] GFM_T0_a, GFM_T0_b, GFM_T1_a, GFM_T1_b, GFM_T2_a, GFM_T2_b, GFM_T3_a, GFM_T3_b;
+    wire [7:0] GFM_F0_a, GFM_F0_b, GFM_F1_a, GFM_F1_b, GFM_F2_a, GFM_F2_b, GFM_F3_a, GFM_F3_b;
+    wire [7:0] GFM_G0_a, GFM_G0_b, GFM_G1_a, GFM_G1_b, GFM_G2_a, GFM_G2_b, GFM_G3_a, GFM_G3_b;
+    wire [7:0] GFM_T0_c, GFM_T0_d, GFM_T1_c, GFM_T1_d, GFM_T2_c, GFM_T2_d, GFM_T3_c, GFM_T3_d;
+    wire [7:0] GFM_F0_c, GFM_F0_d, GFM_F1_c, GFM_F1_d, GFM_F2_c, GFM_F2_d, GFM_F3_c, GFM_F3_d;
+    wire [7:0] GFM_G0_c, GFM_G0_d, GFM_G1_c, GFM_G1_d, GFM_G2_c, GFM_G2_d, GFM_G3_c, GFM_G3_d;
 
-    // 將 128-bit 輸入拆分成 16 個 byte，進行 S-Box 替換
-    assign state_out[127:120] = s_box(state_in[127:120]);
-    assign state_out[119:112] = s_box(state_in[119:112]);
-    assign state_out[111:104] = s_box(state_in[111:104]);
-    assign state_out[103:96]  = s_box(state_in[103:96]);
-    assign state_out[95:88]   = s_box(state_in[95:88]);
-    assign state_out[87:80]   = s_box(state_in[87:80]);
-    assign state_out[79:72]   = s_box(state_in[79:72]);
-    assign state_out[71:64]   = s_box(state_in[71:64]);
-    assign state_out[63:56]   = s_box(state_in[63:56]);
-    assign state_out[55:48]   = s_box(state_in[55:48]);
-    assign state_out[47:40]   = s_box(state_in[47:40]);
-    assign state_out[39:32]   = s_box(state_in[39:32]);
-    assign state_out[31:24]   = s_box(state_in[31:24]);
-    assign state_out[23:16]   = s_box(state_in[23:16]);
-    assign state_out[15:8]    = s_box(state_in[15:8]);
-    assign state_out[7:0]     = s_box(state_in[7:0]);
+    wire [7:0] GFM_T0, GFM_T1, GFM_T2, GFM_T3;
+    wire [7:0] GFM_F0, GFM_F1, GFM_F2, GFM_F3;
+    wire [7:0] GFM_G0, GFM_G1, GFM_G2, GFM_G3;
+	 
+	 wire [7:0] b; 
     
+    // Constants for C vector
+    wire [7:0] C[0:7];
+    assign C[0] = 8'h1; assign C[1] = 8'h1; assign C[2] = 8'h0; assign C[3] = 8'h0;
+    assign C[4] = 8'h0; assign C[5] = 8'h1; assign C[6] = 8'h1; assign C[7] = 8'h0;
+	 
+	 ninv n0(.I(B), .O(b));
+
+	 
+    // T calculation
+    GFM gfm_T0_1 (.a(8'h01), .b(b[0] ^ b[4]), .c(GFM_T0_a)); 
+    GFM gfm_T0_2 (.a(8'h01), .b(b[1] ^ b[5]), .c(GFM_T0_b)); 
+	 GFM gfm_T0_3 (.a(8'h01), .b(b[2] ^ b[6]), .c(GFM_T0_c)); 
+    GFM gfm_T0_4 (.a(8'h01), .b(b[3] ^ b[7]), .c(GFM_T0_d)); 
+
+    GFM gfm_T1_1 (.a(8'h00), .b(b[0] ^ b[4]), .c(GFM_T1_a)); 
+    GFM gfm_T1_2 (.a(8'h01), .b(b[1] ^ b[5]), .c(GFM_T1_b)); 
+    GFM gfm_T1_3 (.a(8'h01), .b(b[2] ^ b[6]), .c(GFM_T1_c)); 
+    GFM gfm_T1_4 (.a(8'h01), .b(b[3] ^ b[7]), .c(GFM_T1_d)); 
+
+    GFM gfm_T2_1 (.a(8'h00), .b(b[0] ^ b[4]), .c(GFM_T2_a));  
+    GFM gfm_T2_2 (.a(8'h00), .b(b[1] ^ b[5]), .c(GFM_T2_b));  
+    GFM gfm_T2_3 (.a(8'h01), .b(b[2] ^ b[6]), .c(GFM_T2_c));  
+    GFM gfm_T2_4 (.a(8'h01), .b(b[3] ^ b[7]), .c(GFM_T2_d)); 
+
+    GFM gfm_T3_1 (.a(8'h00), .b(b[0] ^ b[4]), .c(GFM_T3_a)); 
+    GFM gfm_T3_2 (.a(8'h00), .b(b[1] ^ b[5]), .c(GFM_T3_b)); 
+    GFM gfm_T3_3 (.a(8'h00), .b(b[2] ^ b[6]), .c(GFM_T3_c)); 
+    GFM gfm_T3_4 (.a(8'h01), .b(b[3] ^ b[7]), .c(GFM_T3_d)); 
+
+    // F calculation
+    GFM gfm_F0_1 (.a(8'h01 ^ 8'h01), .b(b[0]), .c(GFM_F0_a)); 
+    GFM gfm_F0_2 (.a(8'h00 ^ 8'h01), .b(b[1]), .c(GFM_F0_b));
+    GFM gfm_F0_3 (.a(8'h00 ^ 8'h01), .b(b[2]), .c(GFM_F0_c)); 
+    GFM gfm_F0_4 (.a(8'h00 ^ 8'h01), .b(b[3]), .c(GFM_F0_d));	 
+
+    GFM gfm_F1_1 (.a(8'h01 ^ 8'h00), .b(b[0]), .c(GFM_F1_a)); 
+    GFM gfm_F1_2 (.a(8'h01 ^ 8'h01), .b(b[1]), .c(GFM_F1_b)); 
+    GFM gfm_F1_3 (.a(8'h00 ^ 8'h01), .b(b[2]), .c(GFM_F1_c)); 
+    GFM gfm_F1_4 (.a(8'h00 ^ 8'h01), .b(b[3]), .c(GFM_F1_d)); 
+
+    GFM gfm_F2_1 (.a(8'h01 ^ 8'h00), .b(b[0]), .c(GFM_F2_a));  
+    GFM gfm_F2_2 (.a(8'h01 ^ 8'h00), .b(b[1]), .c(GFM_F2_b));  
+	 GFM gfm_F2_3 (.a(8'h01 ^ 8'h01), .b(b[2]), .c(GFM_F2_c));  
+    GFM gfm_F2_4 (.a(8'h00 ^ 8'h01), .b(b[3]), .c(GFM_F2_d));  
+
+    GFM gfm_F3_1 (.a(8'h01 ^ 8'h00), .b(b[0]), .c(GFM_F3_a)); 
+    GFM gfm_F3_2 (.a(8'h01 ^ 8'h00), .b(b[1]), .c(GFM_F3_b)); 
+	 GFM gfm_F3_3 (.a(8'h01 ^ 8'h00), .b(b[2]), .c(GFM_F3_c)); 
+    GFM gfm_F3_4 (.a(8'h01 ^ 8'h01), .b(b[3]), .c(GFM_F3_d)); 
+
+    // G calculation
+    GFM gfm_G0_1 (.a(8'h01 ^ 8'h01), .b(b[4]), .c(GFM_G0_a)); 
+    GFM gfm_G0_2 (.a(8'h00 ^ 8'h01), .b(b[5]), .c(GFM_G0_b)); 
+    GFM gfm_G0_3 (.a(8'h00 ^ 8'h01), .b(b[6]), .c(GFM_G0_c)); 
+    GFM gfm_G0_4 (.a(8'h00 ^ 8'h01), .b(b[7]), .c(GFM_G0_d));  
+
+    GFM gfm_G1_1 (.a(8'h01 ^ 8'h00), .b(b[4]), .c(GFM_G1_a)); 
+    GFM gfm_G1_2 (.a(8'h01 ^ 8'h01), .b(b[5]), .c(GFM_G1_b));  
+    GFM gfm_G1_3 (.a(8'h00 ^ 8'h01), .b(b[6]), .c(GFM_G1_c)); 
+    GFM gfm_G1_4 (.a(8'h00 ^ 8'h01), .b(b[7]), .c(GFM_G1_d));
+
+    GFM gfm_G2_1 (.a(8'h01 ^ 8'h00), .b(b[4]), .c(GFM_G2_a)); 
+    GFM gfm_G2_2 (.a(8'h01 ^ 8'h00), .b(b[5]), .c(GFM_G2_b));  
+    GFM gfm_G2_3 (.a(8'h01 ^ 8'h01), .b(b[6]), .c(GFM_G2_c)); 
+    GFM gfm_G2_4 (.a(8'h00 ^ 8'h01), .b(b[7]), .c(GFM_G2_d)); 
+
+    GFM gfm_G3_1 (.a(8'h01 ^ 8'h00), .b(b[4]), .c(GFM_G3_a));  
+    GFM gfm_G3_2 (.a(8'h01 ^ 8'h00), .b(b[5]), .c(GFM_G3_b)); 
+    GFM gfm_G3_3 (.a(8'h01 ^ 8'h00), .b(b[6]), .c(GFM_G3_c));  
+    GFM gfm_G3_4 (.a(8'h01 ^ 8'h01), .b(b[7]), .c(GFM_G3_d)); 
+
+    // combine GFM results
+    assign GFM_T0 = GFM_T0_a ^ GFM_T0_b ^ GFM_T0_c ^ GFM_T0_d;
+    assign GFM_T1 = GFM_T1_a ^ GFM_T1_b ^ GFM_T1_c ^ GFM_T1_d;
+    assign GFM_T2 = GFM_T2_a ^ GFM_T2_b ^ GFM_T2_c ^ GFM_T2_d;
+    assign GFM_T3 = GFM_T3_a ^ GFM_T3_b ^ GFM_T3_c ^ GFM_T3_d;
+
+    assign GFM_F0 = GFM_F0_a ^ GFM_F0_b ^ GFM_F0_c ^ GFM_F0_d;
+    assign GFM_F1 = GFM_F1_a ^ GFM_F1_b ^ GFM_F1_c ^ GFM_F1_d;
+    assign GFM_F2 = GFM_F2_a ^ GFM_F2_b ^ GFM_F2_c ^ GFM_F2_d;
+    assign GFM_F3 = GFM_F3_a ^ GFM_F3_b ^ GFM_F3_c ^ GFM_F3_d;
+
+    assign GFM_G0 = GFM_G0_a ^ GFM_G0_b ^ GFM_G0_c ^ GFM_G0_d;
+    assign GFM_G1 = GFM_G1_a ^ GFM_G1_b ^ GFM_G1_c ^ GFM_G1_d;
+    assign GFM_G2 = GFM_G2_a ^ GFM_G2_b ^ GFM_G2_c ^ GFM_G2_d;
+    assign GFM_G3 = GFM_G3_a ^ GFM_G3_b ^ GFM_G3_c ^ GFM_G3_d;
+
+    // Final output D calculation (similar to Python)
+    assign D[0] = GFM_T0 ^ GFM_F0 ^ C[0];
+    assign D[1] = GFM_T1 ^ GFM_F1 ^ C[1];
+    assign D[2] = GFM_T2 ^ GFM_F2 ^ C[2];
+    assign D[3] = GFM_T3 ^ GFM_F3 ^ C[3];
+    assign D[4] = GFM_T0 ^ GFM_G0 ^ C[4];
+    assign D[5] = GFM_T1 ^ GFM_G1 ^ C[5];
+    assign D[6] = GFM_T2 ^ GFM_G2 ^ C[6];
+    assign D[7] = GFM_T3 ^ GFM_G3 ^ C[7];
+
 endmodule
